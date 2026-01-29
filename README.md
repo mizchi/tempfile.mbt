@@ -26,17 +26,17 @@ Add to your `moon.mod.json`:
 ```moonbit
 fn main {
   // Create a temporary file
-  let tmp = @tempfile.tempfile!()
+  let tmp = @tempfile.tempfile()
 
-  tmp.write_string!("Hello, tempfile!")
+  tmp.write_string("Hello, tempfile!")
   println(tmp.path())  // /tmp/.tmpXXXXXXXXXX
 
-  tmp.cleanup!()
+  tmp.cleanup()
 
   // Create a temporary directory
-  let tmpdir = @tempfile.tempdir!()
+  let tmpdir = @tempfile.tempdir()
   println(tmpdir.path())  // /tmp/.tmpXXXXXXXXXX
-  tmpdir.cleanup!()
+  tmpdir.cleanup()
 }
 ```
 
