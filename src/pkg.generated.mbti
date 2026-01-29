@@ -1,0 +1,49 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "mizchi/tempfile"
+
+import {
+  "moonbitlang/async/fs",
+}
+
+// Values
+pub async fn tempdir() -> TempDir
+
+pub async fn tempfile() -> NamedTempFile
+
+// Errors
+
+// Types and methods
+pub struct Builder {
+  prefix : String
+  suffix : String
+  random_len : Int
+  temp_dir : String
+}
+pub async fn Builder::create_temp_dir(Self) -> TempDir
+pub async fn Builder::create_temp_file(Self) -> NamedTempFile
+pub fn Builder::new() -> Self
+pub fn Builder::prefix(Self, String) -> Self
+pub fn Builder::random_len(Self, Int) -> Self
+pub fn Builder::suffix(Self, String) -> Self
+pub fn Builder::temp_dir(Self, String) -> Self
+
+pub struct NamedTempFile {
+  path : String
+  file : @fs.File
+}
+pub async fn NamedTempFile::cleanup(Self) -> Unit
+pub fn NamedTempFile::file(Self) -> @fs.File
+pub fn NamedTempFile::keep(Self) -> String
+pub fn NamedTempFile::path(Self) -> String
+
+pub struct TempDir {
+  path : String
+}
+pub async fn TempDir::cleanup(Self) -> Unit
+pub fn TempDir::keep(Self) -> String
+pub fn TempDir::path(Self) -> String
+
+// Type aliases
+
+// Traits
+
