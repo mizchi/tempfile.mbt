@@ -82,7 +82,6 @@ pub fn Builder::temp_dir(self : Builder, dir : String) -> Builder {
 /// Call `cleanup()` to delete the file when done.
 pub struct NamedTempFile {
   path : String
-  file : @fs.File
 }
 
 ///|
@@ -92,32 +91,60 @@ pub fn NamedTempFile::path(self : NamedTempFile) -> String {
 }
 
 ///|
-/// Get the underlying file handle.
-pub fn NamedTempFile::file(self : NamedTempFile) -> @fs.File {
-  self.file
+/// Write string content to the temporary file.
+pub fn NamedTempFile::write_string(
+  self : NamedTempFile,
+  content : String,
+) -> Unit raise @fs.IOError {
+  @fs.write_string_to_file(self.path, content)
 }
 
 ///|
-/// Close the file and delete it from the filesystem.
-pub async fn NamedTempFile::cleanup(self : NamedTempFile) -> Unit {
-  self.file.close()
-  @fs.remove(self.path)
+/// Write bytes content to the temporary file.
+pub fn NamedTempFile::write_bytes(
+  self : NamedTempFile,
+  content : Bytes,
+) -> Unit raise @fs.IOError {
+  @fs.write_bytes_to_file(self.path, content)
 }
 
 ///|
-/// Close the file without deleting it. Returns the path.
+/// Read the file content as string.
+pub fn NamedTempFile::read_string(
+  self : NamedTempFile,
+) -> String raise @fs.IOError {
+  @fs.read_file_to_string(self.path)
+}
+
+///|
+/// Read the file content as bytes.
+pub fn NamedTempFile::read_bytes(
+  self : NamedTempFile,
+) -> Bytes raise @fs.IOError {
+  @fs.read_file_to_bytes(self.path)
+}
+
+///|
+/// Delete the file from the filesystem.
+pub fn NamedTempFile::cleanup(self : NamedTempFile) -> Unit raise @fs.IOError {
+  @fs.remove_file(self.path)
+}
+
+///|
+/// Keep the file without deleting it. Returns the path.
 pub fn NamedTempFile::keep(self : NamedTempFile) -> String {
-  self.file.close()
   self.path
 }
 
 ///|
 /// Create a named temporary file using the builder options.
-pub async fn Builder::create_temp_file(self : Builder) -> NamedTempFile {
+pub fn Builder::create_temp_file(
+  self : Builder,
+) -> NamedTempFile raise @fs.IOError {
   let name = generate_random_name(self.prefix, self.suffix, self.random_len)
   let path = self.temp_dir + "/" + name
-  let file = @fs.create(path, permission=0o600)
-  { path, file }
+  @fs.write_bytes_to_file(path, b"")
+  { path, }
 }
 
 ///|
@@ -134,9 +161,28 @@ pub fn TempDir::path(self : TempDir) -> String {
 }
 
 ///|
-/// Delete the directory and all its contents.
-pub async fn TempDir::cleanup(self : TempDir) -> Unit {
-  @fs.rmdir(self.path, recursive=true)
+/// Delete the directory. Note: directory must be empty.
+/// Use `cleanup_recursive` for non-empty directories.
+pub fn TempDir::cleanup(self : TempDir) -> Unit raise @fs.IOError {
+  @fs.remove_dir(self.path)
+}
+
+///|
+/// Recursively delete the directory and all its contents.
+pub fn TempDir::cleanup_recursive(self : TempDir) -> Unit raise @fs.IOError {
+  fn remove_recursive(path : String) -> Unit raise @fs.IOError {
+    if @fs.is_dir(path) {
+      let entries = @fs.read_dir(path)
+      for entry in entries {
+        remove_recursive(path + "/" + entry)
+      }
+      @fs.remove_dir(path)
+    } else {
+      @fs.remove_file(path)
+    }
+  }
+
+  remove_recursive(self.path)
 }
 
 ///|
@@ -147,21 +193,21 @@ pub fn TempDir::keep(self : TempDir) -> String {
 
 ///|
 /// Create a temporary directory using the builder options.
-pub async fn Builder::create_temp_dir(self : Builder) -> TempDir {
+pub fn Builder::create_temp_dir(self : Builder) -> TempDir raise @fs.IOError {
   let name = generate_random_name(self.prefix, self.suffix, self.random_len)
   let path = self.temp_dir + "/" + name
-  @fs.mkdir(path, permission=0o700)
+  @fs.create_dir(path)
   { path, }
 }
 
 ///|
 /// Create a named temporary file with default options.
-pub async fn tempfile() -> NamedTempFile {
+pub fn tempfile() -> NamedTempFile raise @fs.IOError {
   Builder::new().create_temp_file()
 }
 
 ///|
 /// Create a temporary directory with default options.
-pub async fn tempdir() -> TempDir {
+pub fn tempdir() -> TempDir raise @fs.IOError {
   Builder::new().create_temp_dir()
 }

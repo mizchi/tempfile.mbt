@@ -2,13 +2,13 @@
 package "mizchi/tempfile"
 
 import {
-  "moonbitlang/async/fs",
+  "moonbitlang/x/fs",
 }
 
 // Values
-pub async fn tempdir() -> TempDir
+pub fn tempdir() -> TempDir raise @fs.IOError
 
-pub async fn tempfile() -> NamedTempFile
+pub fn tempfile() -> NamedTempFile raise @fs.IOError
 
 // Errors
 
@@ -19,8 +19,8 @@ pub struct Builder {
   random_len : Int
   temp_dir : String
 }
-pub async fn Builder::create_temp_dir(Self) -> TempDir
-pub async fn Builder::create_temp_file(Self) -> NamedTempFile
+pub fn Builder::create_temp_dir(Self) -> TempDir raise @fs.IOError
+pub fn Builder::create_temp_file(Self) -> NamedTempFile raise @fs.IOError
 pub fn Builder::new() -> Self
 pub fn Builder::prefix(Self, String) -> Self
 pub fn Builder::random_len(Self, Int) -> Self
@@ -29,17 +29,20 @@ pub fn Builder::temp_dir(Self, String) -> Self
 
 pub struct NamedTempFile {
   path : String
-  file : @fs.File
 }
-pub async fn NamedTempFile::cleanup(Self) -> Unit
-pub fn NamedTempFile::file(Self) -> @fs.File
+pub fn NamedTempFile::cleanup(Self) -> Unit raise @fs.IOError
 pub fn NamedTempFile::keep(Self) -> String
 pub fn NamedTempFile::path(Self) -> String
+pub fn NamedTempFile::read_bytes(Self) -> Bytes raise @fs.IOError
+pub fn NamedTempFile::read_string(Self) -> String raise @fs.IOError
+pub fn NamedTempFile::write_bytes(Self, Bytes) -> Unit raise @fs.IOError
+pub fn NamedTempFile::write_string(Self, String) -> Unit raise @fs.IOError
 
 pub struct TempDir {
   path : String
 }
-pub async fn TempDir::cleanup(Self) -> Unit
+pub fn TempDir::cleanup(Self) -> Unit raise @fs.IOError
+pub fn TempDir::cleanup_recursive(Self) -> Unit raise @fs.IOError
 pub fn TempDir::keep(Self) -> String
 pub fn TempDir::path(Self) -> String
 

@@ -7,7 +7,7 @@ Temporary file and directory management for MoonBit. Similar to Rust's [tempfile
 - Create temporary files with automatic cleanup
 - Create temporary directories with recursive cleanup
 - Builder pattern for customization (prefix, suffix, temp directory)
-- Native target support (uses `moonbitlang/async/fs`)
+- Cross-platform support (js, wasm, native)
 
 ## Installation
 
@@ -24,19 +24,19 @@ Add to your `moon.mod.json`:
 ## Quick Start
 
 ```moonbit
-async fn main {
+fn main {
   // Create a temporary file
-  let tmp = @tempfile.tempfile()
-  defer tmp.cleanup()
+  let tmp = @tempfile.tempfile!()
 
-  tmp.file().write("Hello, tempfile!")
+  tmp.write_string!("Hello, tempfile!")
   println(tmp.path())  // /tmp/.tmpXXXXXXXXXX
 
-  // Create a temporary directory
-  let tmpdir = @tempfile.tempdir()
-  defer tmpdir.cleanup()
+  tmp.cleanup!()
 
+  // Create a temporary directory
+  let tmpdir = @tempfile.tempdir!()
   println(tmpdir.path())  // /tmp/.tmpXXXXXXXXXX
+  tmpdir.cleanup!()
 }
 ```
 
@@ -57,8 +57,7 @@ See [src/README.mbt.md](src/README.mbt.md) for detailed API documentation with e
 
 ## Requirements
 
-- Target: `native` only
-- Dependencies: `moonbitlang/async`
+- Dependencies: `moonbitlang/x`
 
 ## License
 
