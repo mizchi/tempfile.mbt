@@ -7,7 +7,7 @@ Temporary file and directory management for MoonBit. Similar to Rust's [tempfile
 - Create temporary files with automatic cleanup
 - Create temporary directories with recursive cleanup
 - Builder pattern for customization (prefix, suffix, temp directory)
-- Native target support (uses `moonbitlang/async/fs`)
+- Cross-platform support (js, wasm, native)
 
 ## Installation
 
@@ -27,11 +27,11 @@ Add to your `moon.mod.json`:
 
 ```moonbit
 ///|
-async fn example() {
+fn example() {
   let tmp = @tempfile.tempfile()
-  defer tmp.cleanup()
-  tmp.file().write("Hello!")
+  tmp.write_string("Hello!")
   println(tmp.path()) // /tmp/.tmpXXXXXXXXXX
+  tmp.cleanup()
 }
 ```
 
@@ -39,12 +39,14 @@ async fn example() {
 
 ```moonbit
 ///|
-async fn example_dir() {
+fn example_dir() {
   let tmpdir = @tempfile.tempdir()
-  defer tmpdir.cleanup()
 
   // Create files inside
-  @fs.write_file(tmpdir.path() + "/data.txt", b"content", create=0o644)
+  @fs.write_string_to_file(tmpdir.path() + "/data.txt", "content")
+
+  // Recursive cleanup for non-empty directories
+  tmpdir.cleanup_recursive()
 }
 ```
 
@@ -52,25 +54,14 @@ async fn example_dir() {
 
 ```moonbit
 ///|
-async fn custom_tempfile() {
+fn custom_tempfile() {
   let tmp = @tempfile.Builder::new()
     .prefix("myapp_")
     .suffix(".log")
     .temp_dir("/var/tmp")
     .create_temp_file()
-  defer tmp.cleanup()
   println(tmp.path()) // /var/tmp/myapp_XXXXXXXXXX.log
-}
-```
-
-### Keep files without deletion
-
-```moonbit
-///|
-async fn keep_example() {
-  let tmp = @tempfile.tempfile()
-  let path = tmp.keep() // File is NOT deleted
-  println("Preserved at: " + path)
+  tmp.cleanup()
 }
 ```
 
@@ -126,14 +117,18 @@ test {
 ### NamedTempFile Methods
 
 - `path() -> String` - Get the file path
-- `file() -> @fs.File` - Get the file handle
-- `cleanup()` - Close and delete the file (async)
-- `keep() -> String` - Close without deleting, returns path
+- `write_string(String)` - Write string content
+- `write_bytes(Bytes)` - Write bytes content
+- `read_string() -> String` - Read as string
+- `read_bytes() -> Bytes` - Read as bytes
+- `cleanup()` - Delete the file
+- `keep() -> String` - Keep without deleting, returns path
 
 ### TempDir Methods
 
 - `path() -> String` - Get the directory path
-- `cleanup()` - Recursively delete the directory (async)
+- `cleanup()` - Delete empty directory
+- `cleanup_recursive()` - Recursively delete directory and contents
 - `keep() -> String` - Keep without deleting, returns path
 
 ### Builder Methods
@@ -143,13 +138,12 @@ test {
 - `suffix(String) -> Builder` - Set name suffix (default: "")
 - `random_len(Int) -> Builder` - Set random portion length (default: 10)
 - `temp_dir(String) -> Builder` - Set temp directory (default: "/tmp")
-- `create_temp_file() -> NamedTempFile` - Create a temporary file (async)
-- `create_temp_dir() -> TempDir` - Create a temporary directory (async)
+- `create_temp_file() -> NamedTempFile` - Create a temporary file
+- `create_temp_dir() -> TempDir` - Create a temporary directory
 
 ## Requirements
 
-- Target: `native` only (uses `moonbitlang/async/fs`)
-- Dependencies: `moonbitlang/async`
+- Dependencies: `moonbitlang/x`
 
 ## License
 

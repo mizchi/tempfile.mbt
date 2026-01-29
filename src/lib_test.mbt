@@ -1,45 +1,43 @@
 ///|
-async test "tempfile creates and cleans up file" {
+test "tempfile creates and cleans up file" {
   let tmp = @tempfile.tempfile()
   let path = tmp.path()
-  assert_true(@fs.exists(path))
+  assert_true(@fs.path_exists(path))
   tmp.cleanup()
-  assert_false(@fs.exists(path))
+  assert_false(@fs.path_exists(path))
 }
 
 ///|
-async test "tempfile write and read" {
+test "tempfile write and read" {
   let tmp = @tempfile.tempfile()
-  let file = tmp.file()
-  file.write("hello")
-  file.close()
-  let content = @fs.read_file(tmp.path())
-  inspect(content.text(), content="hello")
+  tmp.write_string("hello")
+  let content = tmp.read_string()
+  inspect(content, content="hello")
   tmp.cleanup()
 }
 
 ///|
-async test "tempdir creates and cleans up directory" {
+test "tempdir creates and cleans up directory" {
   let tmp = @tempfile.tempdir()
   let path = tmp.path()
-  assert_true(@fs.exists(path))
-  assert_true(@fs.kind(path) is Directory)
+  assert_true(@fs.path_exists(path))
+  assert_true(@fs.is_dir(path))
   tmp.cleanup()
-  assert_false(@fs.exists(path))
+  assert_false(@fs.path_exists(path))
 }
 
 ///|
-async test "tempdir with files cleans up recursively" {
+test "tempdir with files cleans up recursively" {
   let tmp = @tempfile.tempdir()
   let file_path = tmp.path() + "/test.txt"
-  @fs.write_file(file_path, b"content", create=0o644)
-  assert_true(@fs.exists(file_path))
-  tmp.cleanup()
-  assert_false(@fs.exists(tmp.path()))
+  @fs.write_string_to_file(file_path, "content")
+  assert_true(@fs.path_exists(file_path))
+  tmp.cleanup_recursive()
+  assert_false(@fs.path_exists(tmp.path()))
 }
 
 ///|
-async test "builder with prefix and suffix" {
+test "builder with prefix and suffix" {
   let builder = @tempfile.Builder::new().prefix("myprefix_").suffix(".txt")
   let tmp = builder.create_temp_file()
   let path = tmp.path()
@@ -49,7 +47,7 @@ async test "builder with prefix and suffix" {
 }
 
 ///|
-async test "builder with custom temp_dir" {
+test "builder with custom temp_dir" {
   let base = @tempfile.tempdir()
   let builder = @tempfile.Builder::new().temp_dir(base.path())
   let tmp = builder.create_temp_file()
@@ -59,17 +57,17 @@ async test "builder with custom temp_dir" {
 }
 
 ///|
-async test "keep preserves file" {
+test "keep preserves file" {
   let tmp = @tempfile.tempfile()
   let path = tmp.keep()
-  assert_true(@fs.exists(path))
-  @fs.remove(path)
+  assert_true(@fs.path_exists(path))
+  @fs.remove_file(path)
 }
 
 ///|
-async test "keep preserves directory" {
+test "keep preserves directory" {
   let tmp = @tempfile.tempdir()
   let path = tmp.keep()
-  assert_true(@fs.exists(path))
-  @fs.rmdir(path)
+  assert_true(@fs.path_exists(path))
+  @fs.remove_dir(path)
 }

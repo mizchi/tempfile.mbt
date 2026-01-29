@@ -1,9 +1,6 @@
 {
   "is-main": true,
   "import": [
-    "mizchi/tempfile",
-    "moonbitlang/async",
-    "moonbitlang/async/fs",
-    "moonbitlang/async/io"
+    "mizchi/tempfile"
   ]
 }
