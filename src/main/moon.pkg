@@ -1,0 +1,7 @@
+import {
+  "mizchi/tempfile",
+}
+
+options(
+  "is-main": true,
+)

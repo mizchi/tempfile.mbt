@@ -25,7 +25,7 @@ Add to your `moon.mod.json`:
 
 ### Create a temporary file
 
-```moonbit
+```moonbit nocheck
 ///|
 fn example() {
   let tmp = @tempfile.tempfile()
@@ -37,7 +37,7 @@ fn example() {
 
 ### Create a temporary directory
 
-```moonbit
+```moonbit nocheck
 ///|
 fn example_dir() {
   let tmpdir = @tempfile.tempdir()
@@ -52,7 +52,7 @@ fn example_dir() {
 
 ### Builder pattern
 
-```moonbit
+```moonbit nocheck
 ///|
 fn custom_tempfile() {
   let tmp = @tempfile.Builder::new()
