@@ -1,0 +1,9 @@
+import {
+  "moonbitlang/x/fs",
+  "moonbitlang/core/env",
+  "moonbitlang/core/random",
+}
+
+import {
+  "moonbitlang/x/fs",
+} for "test"

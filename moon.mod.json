@@ -1,8 +1,8 @@
 {
   "name": "mizchi/tempfile",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "deps": {
-    "moonbitlang/x": "0.4.38"
+    "moonbitlang/x": "0.4.40"
   },
   "readme": "src/README.mbt.md",
   "repository": "https://github.com/mizchi/tempfile.mbt",
