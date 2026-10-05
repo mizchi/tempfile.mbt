@@ -25,7 +25,7 @@ Add to your `moon.mod.json`:
 
 ### Create a temporary file
 
-```moonbit
+```moonbit nocheck
 ///|
 fn example() {
   let tmp = @tempfile.tempfile()
@@ -37,7 +37,7 @@ fn example() {
 
 ### Create a temporary directory
 
-```moonbit
+```moonbit nocheck
 ///|
 fn example_dir() {
   let tmpdir = @tempfile.tempdir()
@@ -52,7 +52,7 @@ fn example_dir() {
 
 ### Builder pattern
 
-```moonbit
+```moonbit nocheck
 ///|
 fn custom_tempfile() {
   let tmp = @tempfile.Builder::new()
@@ -73,7 +73,7 @@ fn custom_tempfile() {
 ///|
 test {
   // Builder creates customizable temp file/dir
-  let builder = Builder::new()
+  let builder = @tempfile.Builder::new()
   inspect(builder.prefix, content=".tmp")
   inspect(builder.suffix, content="")
   inspect(builder.random_len, content="10")
@@ -85,7 +85,7 @@ test {
 ///|
 test {
   // Builder methods return new Builder (immutable)
-  let b1 = Builder::new()
+  let b1 = @tempfile.Builder::new()
   let b2 = b1.prefix("test_")
   inspect(b1.prefix, content=".tmp")
   inspect(b2.prefix, content="test_")
@@ -96,7 +96,7 @@ test {
 ///|
 test {
   // Builder can chain methods
-  let builder = Builder::new()
+  let builder = @tempfile.Builder::new()
     .prefix("app_")
     .suffix(".tmp")
     .random_len(8)

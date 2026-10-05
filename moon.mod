@@ -1,0 +1,19 @@
+name = "mizchi/tempfile"
+
+version = "0.1.0"
+
+import {
+  "moonbitlang/x@0.5.5",
+}
+
+readme = "src/README.mbt.md"
+
+repository = "https://github.com/mizchi/tempfile.mbt"
+
+license = "Apache-2.0"
+
+keywords = [ "tempfile", "temporary", "filesystem" ]
+
+description = "Temporary file and directory management for MoonBit"
+
+source = "src"
