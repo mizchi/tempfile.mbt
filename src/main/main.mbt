@@ -22,6 +22,6 @@ fn main {
     tmpdir.cleanup()
     println("Directory cleaned up")
   } catch {
-    e => println("Error: " + e.to_string())
+    e => println("Error: " + repr(e))
   }
 }

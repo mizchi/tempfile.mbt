@@ -11,7 +11,7 @@ priv struct RandomState {
 }
 
 ///|
-let random_state : RandomState = { counter: 0 }
+let random_state : RandomState = { counter: 0, }
 
 ///|
 fn generate_random_name(prefix : String, suffix : String, len : Int) -> String {
@@ -28,7 +28,7 @@ fn generate_random_name(prefix : String, suffix : String, len : Int) -> String {
   let seed_bytes = Bytes::from_array(seed_arr.iter().collect())
   let rand = @random.Rand::chacha8(seed=seed_bytes)
   let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-  let buf = StringBuilder::new()
+  let buf = StringBuilder()
   buf.write_string(prefix)
   for _ in 0..<len {
     let idx = rand.int(limit=chars.length())
@@ -50,7 +50,7 @@ pub struct Builder {
 ///|
 /// Create a new Builder with default options.
 pub fn Builder::new() -> Builder {
-  { prefix: ".tmp", suffix: "", random_len: 10, temp_dir: default_temp_dir }
+  { prefix: ".tmp", suffix: "", random_len: 10, temp_dir: default_temp_dir, }
 }
 
 ///|
@@ -68,13 +68,13 @@ pub fn Builder::suffix(self : Builder, suffix : String) -> Builder {
 ///|
 /// Set the length of the random portion of the name.
 pub fn Builder::random_len(self : Builder, len : Int) -> Builder {
-  { ..self, random_len: len }
+  { ..self, random_len: len, }
 }
 
 ///|
 /// Set the directory where temporary files/directories will be created.
 pub fn Builder::temp_dir(self : Builder, dir : String) -> Builder {
-  { ..self, temp_dir: dir }
+  { ..self, temp_dir: dir, }
 }
 
 ///|

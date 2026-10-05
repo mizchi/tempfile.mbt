@@ -49,4 +49,3 @@ pub fn TempDir::path(Self) -> String
 // Type aliases
 
 // Traits
-

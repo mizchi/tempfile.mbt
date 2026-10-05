@@ -23,5 +23,9 @@ jobs:
         run: moon update
       - name: Moon check
         run: moon check --deny-warn --target ${{ matrix.target }}
+      - name: Moon build
+        run: moon build --target ${{ matrix.target }}
       - name: Moon test
         run: moon test --target ${{ matrix.target }}
+      - name: Moon fmt check
+        run: moon fmt --check
